@@ -1,0 +1,6 @@
+[submodule "egress_lambda_functions"]
+	path = egress_lambda_functions
+	url = https://spring.paloaltonetworks.com/mekanayake/egress_lambda_functions.git
+[submodule "lambda_layer_function"]
+	path = lambda_layer_function
+	url = https://spring.paloaltonetworks.com/mekanayake/lambda_layer_function.git
