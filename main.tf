@@ -1,94 +1,3 @@
-variable "name" {
-  description = "name to prepend to lambda functions and state machine"
-  type        = string
-}
-
-variable "lambda_execution_role" {
-  description = "IAM role attached to the Lambda Function"
-  type        = string
-}
-
-variable "sfn_execution_role" {
-  description = "IAM role attached to the state machine"
-  type        = string
-}
-
-variable "region" {
-  description = "lambda region"
-  type        = string
-  default     = "eu-west-2"
-}
-
-variable "vpc_cidr" {
-  description = "cidr of the VPC"
-  type        = string
-}
-
-variable "lambda_subnet_ids" {
-  description = "A list of subnet IDs associated with the Lambda function"
-  type        = list(string)
-}
-
-variable "security_group_ids" {
-  description = "A list of security group IDs associated with the Lambda function"
-  type        = list(string)
-}
-
-variable "ssm_key_panorama_api_key" {
-  description = "SSM key name of the panorama api key"
-  type        = string
-}
-
-variable "gp_client_ip_pool_db_name" {
-  description = "name of the dynamo DB which stores GP tunnel client IP pool info"
-  type        = string
-}
-
-variable "runtime" {
-  description = "The identifier of the function's runtime"
-  default     = "python3.6"
-}
-
-variable "development" {
-  description = "Creates zip archives to make developer's life easier"
-  type        = bool
-  default     = false
-}
-
-variable "layer_function_dir" {
-  description = "Local dir name of the lambda layer function"
-  type        = string
-  default     = "lambda_layer_function"
-}
-
-variable "layer_function_build_dir" {
-  description = "layer function zip directory"
-  type        = string
-  default     = "package"
-}
-
-variable "lambda_function_dir" {
-  description = "Local dir name of the lambda functions"
-  type        = string
-}
-
-variable "lamda_function_src_dir" {
-  description = "lambda function source directory"
-  type        = string
-  default     = "src"
-}
-
-variable "lamda_function_build_dir" {
-  description = "lambda function source directory"
-  type        = string
-  default     = "package"
-}
-
-variable "public_ipv4_pool" {
-  type    = string
-  default = "amazon"
-}
-
 resource "aws_lambda_layer_version" "as_layer" {
   filename    = "${path.root}/${var.layer_function_dir}/${var.layer_function_build_dir}/layer.zip"
   layer_name  = "${var.name}-as-layer"
@@ -108,6 +17,15 @@ data "archive_file" "stepfunction" {
 
 }
 
+data "archive_file" "nodejslambda" {
+  for_each = var.development == true ? toset([for file in fileset("${path.root}/${var.lambda_function_dir}/src", "*.js") : trimsuffix(file, ".js")]) : toset([])
+
+  type        = "zip"
+  source_file = "${path.root}/${var.lambda_function_dir}/src/${each.key}.js"
+  output_path = "${path.root}/${var.lambda_function_dir}/package/${each.key}.zip"
+
+}
+
 # Create step function s3 bucket
 resource "aws_s3_bucket" "stepfunction" {
   bucket_prefix = "${lower(var.name)}-stepfunction"
@@ -122,7 +40,18 @@ resource "aws_s3_bucket_object" "this" {
   source   = "${path.root}/${var.lambda_function_dir}/package/${each.key}.zip"
   etag     = filemd5("${path.root}/${var.lambda_function_dir}/package/${each.key}.zip")
 
-  depends_on = [data.archive_file.stepfunction]
+  depends_on = [data.archive_file.stepfunction, data.archive_file.nodejslambda]
+}
+
+# Upload sfn init function
+resource "aws_s3_bucket_object" "sfn_init_s3" {
+  for_each = local.sfn_init_lambda
+  bucket   = aws_s3_bucket.stepfunction.id
+  key      = "${each.key}.zip"
+  source   = "${path.root}/${var.lambda_function_dir}/package/${each.key}.zip"
+  etag     = filemd5("${path.root}/${var.lambda_function_dir}/package/${each.key}.zip")
+
+  depends_on = [data.archive_file.stepfunction, data.archive_file.nodejslambda]
 }
 
 resource "aws_lambda_function" "this" {
@@ -134,10 +63,10 @@ resource "aws_lambda_function" "this" {
   role          = var.lambda_execution_role
   timeout       = each.value.timeout
   runtime       = lookup(each.value, "runtime", var.runtime)
-  layers        = [aws_lambda_layer_version.as_layer.arn]
+  layers        = lookup(each.value, "layers", [aws_lambda_layer_version.as_layer.arn])
 
   environment {
-    variables = lookup(each.value, "environment_variables", null)
+    variables = lookup(each.value, "environment_variables", { Region = var.region })
   }
 
   dynamic "vpc_config" {
@@ -154,35 +83,403 @@ resource "aws_lambda_function" "this" {
 
 locals {
   lambda_functions = {
-    setup_firewall = {
-      handler = "setup_firewall.lambda_handler"
-      timeout = 600
+
+    custom_gp_metrics = {
+      handler = "custom_gp_metrics.lambda_handler"
+      timeout = 60
+      runtime = "nodejs12.x"
+      layers  = []
+      environment_variables = {
+        Region = var.region
+      }
+    }
+
+    config_fw = {
+      handler = "config_fw.lambda_handler"
+      timeout = 20
       environment_variables = {
         Region                    = var.region
         gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
-        ssm_key_panorama_api_key  = var.ssm_key_panorama_api_key
+        vmseries_api_key          = var.vmseries_api_key
+        panorama_ip_1             = "172.30.0.10"
+        panorama_ip_2             = "172.30.1.10"
       }
       vpc_config = {
         subnet_ids         = var.lambda_subnet_ids
         security_group_ids = var.security_group_ids
       }
     }
+
+    get_serial = {
+      handler = "get_serial.lambda_handler"
+      timeout = 900
+      environment_variables = {
+        Region                    = var.region
+        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+        vmseries_api_key          = var.vmseries_api_key
+        panorama_ip_1             = "172.30.0.10"
+        panorama_ip_2             = "172.30.1.10"
+      }
+      vpc_config = {
+        subnet_ids         = var.lambda_subnet_ids
+        security_group_ids = var.security_group_ids
+      }
+    }
+
+    config_panorama = {
+      handler = "config_panorama.lambda_handler"
+      timeout = 600
+      environment_variables = {
+        panorama_api_key = var.panorama_api_key
+        panorama_ip_1    = "172.30.0.10"
+        panorama_ip_2    = "172.30.1.10"
+        tpl_stk          = "MOJ AWS GP Gateway Stack"
+        device_group     = "MOJ AWS GP Gateway Firewalls"
+      }
+      vpc_config = {
+        subnet_ids         = var.lambda_subnet_ids
+        security_group_ids = var.security_group_ids
+      }
+    }
+
+    deactivate_license = {
+      handler = "deactivate_license.lambda_handler"
+      timeout = 300
+      environment_variables = {
+        panorama_api_key = var.panorama_api_key
+        panorama_ip_1    = "172.30.0.10"
+        panorama_ip_2    = "172.30.1.10"
+      }
+      vpc_config = {
+        subnet_ids         = var.lambda_subnet_ids
+        security_group_ids = var.security_group_ids
+      }
+    }
+
+    cleanup_panorama = {
+      handler = "cleanup_panorama.lambda_handler"
+      timeout = 600
+      environment_variables = {
+        panorama_api_key = var.panorama_api_key
+        panorama_ip_1    = "172.30.0.10"
+        panorama_ip_2    = "172.30.1.10"
+        tpl_stk          = "MOJ AWS GP Gateway Stack"
+        device_group     = "MOJ AWS GP Gateway Firewalls"
+      }
+      vpc_config = {
+        subnet_ids         = var.lambda_subnet_ids
+        security_group_ids = var.security_group_ids
+      }
+    }
+
+
+    scale_in_or_out = {
+      handler = "scale_in_or_out.lambda_handler"
+      timeout = 600
+    }
+
+    create_eni = {
+      handler = "create_eni.lambda_handler"
+      timeout = 60
+
+      environment_variables = {
+        Region         = var.region
+        apikey         = "LUFRPT01R2hjZUVOQzRLQUlPVWRYK0gvcFFNNVMvY3M9TDlFQnIxMUNnNS9pN0dHZDFBeDJLVG5QZzFISHNQMU9vdkFoLytLZnNjZ1JYcFlmeDdqWENsZ3ZYNU5GQkhXdQ=="
+        PublicIpv4Pool = var.public_ipv4_pool
+      }
+    }
+
+    delete_eni = {
+      handler = "delete_eni.lambda_handler"
+      timeout = 300
+
+      environment_variables = {
+        Region         = var.region
+        apikey         = "LUFRPT01R2hjZUVOQzRLQUlPVWRYK0gvcFFNNVMvY3M9TDlFQnIxMUNnNS9pN0dHZDFBeDJLVG5QZzFISHNQMU9vdkFoLytLZnNjZ1JYcFlmeDdqWENsZ3ZYNU5GQkhXdQ=="
+        PublicIpv4Pool = var.public_ipv4_pool
+      }
+    }
+
+    reserve_record = {
+      handler = "reserve_record.lambda_handler"
+      timeout = 10
+
+      environment_variables = {
+        Region                    = var.region
+        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+      }
+    }
+
+    release_db = {
+      handler = "release_db.lambda_handler"
+      timeout = 10
+
+      environment_variables = {
+        Region                    = var.region
+        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+      }
+    }
+
+    create_dns = {
+      handler = "create_dns.lambda_handler"
+      timeout = 30
+
+      environment_variables = {
+        Region       = var.region
+        host_zone_id = var.host_zone_id
+        host_zone    = var.aws_route53_zone
+      }
+    }
+
+    delete_dns = {
+      handler = "delete_dns.lambda_handler"
+      timeout = 30
+
+      environment_variables = {
+        Region       = var.region
+        host_zone_id = var.host_zone_id
+        host_zone    = var.aws_route53_zone
+      }
+    }
+
+    update_db = {
+      handler = "update_db.lambda_handler"
+      timeout = 10
+
+      environment_variables = {
+        Region                    = var.region
+        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+      }
+    }
+
+    query_db = {
+      handler = "query_db.lambda_handler"
+      timeout = 10
+
+      environment_variables = {
+        Region                    = var.region
+        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+      }
+    }
+
+    update_ec2_name = {
+      handler = "update_ec2_name.lambda_handler"
+      timeout = 10
+    }
+
+    cfn_success = {
+      handler = "cfn_success.lambda_handler"
+      timeout = 600
+    }
+
+    cfn_fail = {
+      handler = "cfn_fail.lambda_handler"
+      timeout = 10
+    }
+  }
+
+  sfn_init_lambda = {
+    start_sfn = {
+      handler = "start_sfn.lambda_handler"
+      timeout = 30
+
+      environment_variables = {
+        InitFWStateMachine = aws_sfn_state_machine.sfn.id
+      }
+    }
   }
 }
 
-resource "aws_sfn_state_machine" "sfn_state_machine" {
-  name     = "${var.name}-AutoscaleStateMachine"
+resource "aws_lambda_function" "sfn_init" {
+  for_each      = local.sfn_init_lambda
+  function_name = "${var.name}-${each.key}"
+  s3_bucket     = aws_s3_bucket.stepfunction.id
+  s3_key        = aws_s3_bucket_object.sfn_init_s3[each.key].id
+  handler       = each.value.handler
+  role          = var.lambda_execution_role
+  timeout       = each.value.timeout
+  runtime       = lookup(each.value, "runtime", var.runtime)
+  layers        = lookup(each.value, "layers", [aws_lambda_layer_version.as_layer.arn])
+
+  environment {
+    variables = lookup(each.value, "environment_variables", { Region = var.region })
+  }
+
+  dynamic "vpc_config" {
+    for_each = lookup(each.value, "vpc_config", null) != null ? [each.value.vpc_config] : []
+
+    content {
+      subnet_ids         = vpc_config.value.subnet_ids
+      security_group_ids = vpc_config.value.security_group_ids
+    }
+  }
+
+  source_code_hash = filebase64sha256("${path.root}/${var.lambda_function_dir}/package/${each.key}.zip")
+  depends_on       = [aws_sfn_state_machine.sfn]
+}
+
+resource "aws_sfn_state_machine" "sfn" {
+  name     = "${var.name}-Autoscale"
   role_arn = var.sfn_execution_role
 
   definition = <<EOF
 {
-  "Comment": "GlobalProtect State function",
-  "StartAt": "SetupFirewall",
+  "Comment": "GlobalProtect Autoscaling step function",
+  "StartAt": "scale_in_out",
   "States": {
-    "SetupFirewall": {
+    "scale_in_out": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.LifecycleTransition",
+          "StringEquals": "autoscaling:EC2_INSTANCE_LAUNCHING",
+          "Next": "create_eni"
+        },
+        {
+          "Variable": "$.LifecycleTransition",
+          "StringEquals": "autoscaling:EC2_INSTANCE_TERMINATING",
+          "Next": "delete_eni"
+        }
+      ],
+      "Default": "cfn_success"
+    },
+    "create_eni": {
       "Type": "Task",
-      "Resource": "${aws_lambda_function.this["setup_firewall"].arn}",
+      "Resource": "${aws_lambda_function.this["create_eni"].arn}",
+      "Next": "reserve_record",
+      "TimeoutSeconds": 300,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "Next": "cfn_fail"
+        }
+      ]
+    },
+    "reserve_record": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["reserve_record"].arn}",
+      "Next": "config_fw",
+      "TimeoutSeconds": 10
+    },
+    "config_fw": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["config_fw"].arn}",
+      "Next": "get_serial",
+      "Retry": [ 
+        {
+          "ErrorEquals": [ "FWNotUpException" ],
+          "IntervalSeconds": 120,
+          "MaxAttempts": 15,
+          "BackoffRate": 1
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "cfn_fail"
+        }
+      ]
+    },
+    "get_serial": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["get_serial"].arn}",
+      "TimeoutSeconds": 10,
+      "Next": "update_db",
+      "Retry": [ 
+        {
+          "ErrorEquals": [ "NotLicensed" ],
+          "IntervalSeconds": 10,
+          "MaxAttempts": 10,
+          "BackoffRate": 1.5
+        } 
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "cfn_fail"
+        }
+      ]
+    },
+    "update_db": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["update_db"].arn}",
+      "Next": "update_ec2_name",
+      "TimeoutSeconds": 10
+    },
+    "update_ec2_name": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["update_ec2_name"].arn}",
+      "Next": "config_panorama",
+      "TimeoutSeconds": 10
+    },
+    "config_panorama": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["config_panorama"].arn}",
+      "Next": "create_dns",
+      "TimeoutSeconds": 300
+    },
+    "create_dns": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["create_dns"].arn}",
+      "Next": "cfn_success",
+      "TimeoutSeconds": 60
+    },
+    "delete_eni": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["delete_eni"].arn}",
+      "Next": "query_db",
+      "TimeoutSeconds": 300
+    },
+    "query_db": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["query_db"].arn}",
+      "Next": "delete_dns",
+      "TimeoutSeconds": 10
+    },
+    "delete_dns": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["delete_dns"].arn}",
+      "Next": "deactivate_license",
+      "TimeoutSeconds": 10
+    },
+    "deactivate_license": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["deactivate_license"].arn}",
+      "Next": "cleanup_panorama",
+      "TimeoutSeconds": 10
+    },
+    "cleanup_panorama": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["cleanup_panorama"].arn}",
+      "Next": "release_db",
+      "TimeoutSeconds": 20
+    },
+    "release_db": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["release_db"].arn}",
+      "Next": "cfn_success",
+      "TimeoutSeconds": 20
+    },
+    "cfn_success": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["cfn_success"].arn}",
       "End": true
+    },
+    "cfn_fail": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["cfn_fail"].arn}",
+      "Next": "FailState"
+    },
+    "FailState": {
+      "Type": "Fail",
+      "Cause": "Failed",
+      "Error": "Creation Error"
     }
   }
 }
