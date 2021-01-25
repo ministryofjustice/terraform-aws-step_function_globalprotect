@@ -101,8 +101,8 @@ locals {
         Region                    = var.region
         gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
         vmseries_api_key          = var.vmseries_api_key
-        panorama_ip_1             = "172.30.0.10"
-        panorama_ip_2             = "172.30.1.10"
+        panorama_ip_1             = var.panorama_ip_1
+        panorama_ip_2             = var.panorama_ip_2
       }
       vpc_config = {
         subnet_ids         = var.lambda_subnet_ids
@@ -184,7 +184,6 @@ locals {
 
       environment_variables = {
         Region         = var.region
-        apikey         = "LUFRPT01R2hjZUVOQzRLQUlPVWRYK0gvcFFNNVMvY3M9TDlFQnIxMUNnNS9pN0dHZDFBeDJLVG5QZzFISHNQMU9vdkFoLytLZnNjZ1JYcFlmeDdqWENsZ3ZYNU5GQkhXdQ=="
         PublicIpv4Pool = var.public_ipv4_pool
       }
     }
@@ -195,7 +194,6 @@ locals {
 
       environment_variables = {
         Region         = var.region
-        apikey         = "LUFRPT01R2hjZUVOQzRLQUlPVWRYK0gvcFFNNVMvY3M9TDlFQnIxMUNnNS9pN0dHZDFBeDJLVG5QZzFISHNQMU9vdkFoLytLZnNjZ1JYcFlmeDdqWENsZ3ZYNU5GQkhXdQ=="
         PublicIpv4Pool = var.public_ipv4_pool
       }
     }

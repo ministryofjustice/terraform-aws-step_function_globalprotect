@@ -34,17 +34,23 @@ variable "security_group_ids" {
   type        = list(string)
 }
 
-variable "ssm_key_panorama_api_key" {
-  description = "SSM key name of the panorama api key"
-  type        = string
-}
-
 variable "vmseries_api_key" {
   description = "VM-series bootstrap admin user's api key"
   type        = string
 }
+
 variable "panorama_api_key" {
   description = "Panorama aws_lambda user's api key"
+  type        = string
+}
+
+variable "panorama_ip_1" {
+  description = "Panorama IP 1"
+  type        = string
+}
+
+variable "panorama_ip_2" {
+  description = "Panorama IP 2"
   type        = string
 }
 
@@ -60,11 +66,6 @@ variable "aws_route53_zone" {
 
 variable "gp_client_ip_pool_db_name" {
   description = "name of the dynamo DB which stores GP tunnel client IP pool info"
-  type        = string
-}
-
-variable "authcode" {
-  description = "Authcode to license GP gateways"
   type        = string
 }
 
