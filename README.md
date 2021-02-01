@@ -1,44 +1,55 @@
-## [[Module Name]]
-### [[Overview]]
-Describe what the module should do.
+A terraform module for deploying lambda functions, state functions, required roles, and Dynamo DB for gateway tracking.
 
-### [[Caveats]]
-Describe what the module cannot do . 
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
 
-### Required Variables  
-__Name:__ [[Name of VAR]]  
-__TYPE:__ [[Type of VAR]]  
-__DESCRIPTION:__ [[Description]]  
-[[ if dictionary ]]  
-__REQUIRED KEYS:__ 
+No requirements.
 
-| key | type | Description |
----|---|---
-|  |  |
+## Providers
 
-__OPTIONAL KEYS:__  
+| Name | Version |
+|------|---------|
+| archive | n/a |
+| aws | n/a |
 
-| key | type | Description |
----|---|---
-|   |   |
+## Inputs
 
-### Optional Variables
-__Name:__ [[Name of VAR]]  
-__TYPE:__ [[Type of VAR]]  
-__DESCRIPTION:__ [[Description]]  
-[[ if dictionary ]]  
-__REQUIRED KEYS:__   
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| availability\_zones | (optional) availability zones in the region | `list(string)` | <pre>[<br>  "eu-west-2a",<br>  "eu-west-2b",<br>  "eu-west-2c"<br>]</pre> | no |
+| aws\_route53\_zone | DNS host zone | `string` | n/a | yes |
+| development | Creates zip archives to make developer's life easier | `bool` | `false` | no |
+| gp\_client\_ip\_pool\_db\_name | name of the dynamo DB which stores GP tunnel client IP pool info | `string` | n/a | yes |
+| gp\_gateway\_hostname\_template | n/a | `string` | `"MOJ-AW2-FW%02d%s"` | no |
+| gp\_pool\_subnet\_mask | n/a | `string` | `"/7"` | no |
+| gp\_pool\_supernet\_cidr\_range\_ipv4 | Supernet of the GlobalProtect Client IP pool subnets | `string` | `"10.184.0.0/14"` | no |
+| host\_zone\_id | DNS host zone ID | `string` | n/a | yes |
+| lambda\_execution\_role | IAM role attached to the Lambda Function | `string` | n/a | yes |
+| lambda\_function\_dir | Local dir name of the lambda functions | `string` | n/a | yes |
+| lambda\_subnet\_ids | A list of subnet IDs associated with the Lambda function | `list(string)` | n/a | yes |
+| lamda\_function\_build\_dir | lambda function source directory | `string` | `"package"` | no |
+| lamda\_function\_src\_dir | lambda function source directory | `string` | `"src"` | no |
+| layer\_function\_build\_dir | layer function zip directory | `string` | `"package"` | no |
+| layer\_function\_dir | Local dir name of the lambda layer function | `string` | `"lambda_layer_function"` | no |
+| name | name to prepend to lambda functions and state machine | `string` | n/a | yes |
+| panorama\_api\_key | Panorama aws\_lambda user's api key | `string` | n/a | yes |
+| panorama\_ip\_1 | Panorama IP 1 | `string` | n/a | yes |
+| panorama\_ip\_2 | Panorama IP 2 | `string` | n/a | yes |
+| public\_ipv4\_pool | n/a | `string` | `"amazon"` | no |
+| region | lambda region | `string` | `"eu-west-2"` | no |
+| runtime | The identifier of the function's runtime | `string` | `"python3.6"` | no |
+| security\_group\_ids | A list of security group IDs associated with the Lambda function | `list(string)` | n/a | yes |
+| sfn\_execution\_role | IAM role attached to the state machine | `string` | n/a | yes |
+| subnets\_to\_skip | Number of sunets to skip (10.184.0.0/21, 10.184.8.0/21) | `string` | `2` | no |
+| suffix\_map | n/a | `list(string)` | <pre>[<br>  "A",<br>  "B",<br>  "C",<br>  "D"<br>]</pre> | no |
+| tags | n/a | `map(string)` | `{}` | no |
+| vmseries\_api\_key | VM-series bootstrap admin user's api key | `string` | n/a | yes |
 
-| key | type | Description |
----|---|---
-  |   |   |
+## Outputs
 
-__OPTIONAL KEYS:__  
+| Name | Description |
+|------|-------------|
+| lambda\_scale\_sfn\_init\_arn | n/a |
+| lambda\_scale\_sfn\_init\_name | n/a |
 
-| key | type | Description |
----|---|---
-|  |  |
-
-### Resources Created  
-(resoucrce)[link to resource]  
-
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
