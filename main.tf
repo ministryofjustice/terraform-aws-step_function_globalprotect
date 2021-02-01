@@ -60,7 +60,7 @@ resource "aws_lambda_function" "this" {
   s3_bucket     = aws_s3_bucket.stepfunction.id
   s3_key        = aws_s3_bucket_object.this[each.key].id
   handler       = each.value.handler
-  role          = var.lambda_execution_role
+  role          = aws_iam_role.lambda_execution_role.arn
   timeout       = each.value.timeout
   runtime       = lookup(each.value, "runtime", var.runtime)
   layers        = lookup(each.value, "layers", [aws_lambda_layer_version.as_layer.arn])
@@ -294,7 +294,7 @@ resource "aws_lambda_function" "sfn_init" {
   s3_bucket     = aws_s3_bucket.stepfunction.id
   s3_key        = aws_s3_bucket_object.sfn_init_s3[each.key].id
   handler       = each.value.handler
-  role          = var.lambda_execution_role
+  role          = aws_iam_role.lambda_execution_role.arn
   timeout       = each.value.timeout
   runtime       = lookup(each.value, "runtime", var.runtime)
   layers        = lookup(each.value, "layers", [aws_lambda_layer_version.as_layer.arn])
@@ -318,7 +318,7 @@ resource "aws_lambda_function" "sfn_init" {
 
 resource "aws_sfn_state_machine" "sfn" {
   name     = "${var.name}-Autoscale"
-  role_arn = var.sfn_execution_role
+  role_arn = aws_iam_role.sfn_execution_role.arn
 
   definition = <<EOF
 {

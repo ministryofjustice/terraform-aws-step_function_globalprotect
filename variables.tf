@@ -13,15 +13,15 @@ variable "sfn_execution_role" {
   type        = string
 }
 
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
+
 variable "region" {
   description = "lambda region"
   type        = string
   default     = "eu-west-2"
-}
-
-variable "vpc_cidr" {
-  description = "cidr of the VPC"
-  type        = string
 }
 
 variable "lambda_subnet_ids" {
@@ -113,3 +113,39 @@ variable "public_ipv4_pool" {
   type    = string
   default = "amazon"
 }
+
+
+variable "gp_pool_supernet_cidr_range_ipv4" {
+  type        = string
+  description = "Supernet of the GlobalProtect Client IP pool subnets"
+  default     = "10.184.0.0/14"
+}
+
+variable "gp_pool_subnet_mask" {
+  type    = string
+  default = "/7"
+}
+
+
+variable "subnets_to_skip" {
+  type        = string
+  description = "Number of sunets to skip (10.184.0.0/21, 10.184.8.0/21)"
+  default     = 2
+}
+
+variable "availability_zones" {
+  type        = list(string)
+  description = "(optional) availability zones in the region"
+  default     = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+}
+
+variable "suffix_map" {
+  type    = list(string)
+  default = ["A", "B", "C", "D"]
+}
+
+variable "gp_gateway_hostname_template" {
+  type    = string
+  default = "MOJ-AW2-FW%02d%s"
+}
+
