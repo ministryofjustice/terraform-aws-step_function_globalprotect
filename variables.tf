@@ -3,16 +3,6 @@ variable "name" {
   type        = string
 }
 
-variable "lambda_execution_role" {
-  description = "IAM role attached to the Lambda Function"
-  type        = string
-}
-
-variable "sfn_execution_role" {
-  description = "IAM role attached to the state machine"
-  type        = string
-}
-
 variable "tags" {
   type    = map(string)
   default = {}
@@ -61,11 +51,6 @@ variable "host_zone_id" {
 
 variable "aws_route53_zone" {
   description = "DNS host zone"
-  type        = string
-}
-
-variable "gp_client_ip_pool_db_name" {
-  description = "name of the dynamo DB which stores GP tunnel client IP pool info"
   type        = string
 }
 

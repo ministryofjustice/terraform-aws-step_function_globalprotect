@@ -19,12 +19,10 @@ No requirements.
 | availability\_zones | (optional) availability zones in the region | `list(string)` | <pre>[<br>  "eu-west-2a",<br>  "eu-west-2b",<br>  "eu-west-2c"<br>]</pre> | no |
 | aws\_route53\_zone | DNS host zone | `string` | n/a | yes |
 | development | Creates zip archives to make developer's life easier | `bool` | `false` | no |
-| gp\_client\_ip\_pool\_db\_name | name of the dynamo DB which stores GP tunnel client IP pool info | `string` | n/a | yes |
 | gp\_gateway\_hostname\_template | n/a | `string` | `"MOJ-AW2-FW%02d%s"` | no |
 | gp\_pool\_subnet\_mask | n/a | `string` | `"/7"` | no |
 | gp\_pool\_supernet\_cidr\_range\_ipv4 | Supernet of the GlobalProtect Client IP pool subnets | `string` | `"10.184.0.0/14"` | no |
 | host\_zone\_id | DNS host zone ID | `string` | n/a | yes |
-| lambda\_execution\_role | IAM role attached to the Lambda Function | `string` | n/a | yes |
 | lambda\_function\_dir | Local dir name of the lambda functions | `string` | n/a | yes |
 | lambda\_subnet\_ids | A list of subnet IDs associated with the Lambda function | `list(string)` | n/a | yes |
 | lamda\_function\_build\_dir | lambda function source directory | `string` | `"package"` | no |
@@ -39,7 +37,6 @@ No requirements.
 | region | lambda region | `string` | `"eu-west-2"` | no |
 | runtime | The identifier of the function's runtime | `string` | `"python3.6"` | no |
 | security\_group\_ids | A list of security group IDs associated with the Lambda function | `list(string)` | n/a | yes |
-| sfn\_execution\_role | IAM role attached to the state machine | `string` | n/a | yes |
 | subnets\_to\_skip | Number of sunets to skip (10.184.0.0/21, 10.184.8.0/21) | `string` | `2` | no |
 | suffix\_map | n/a | `list(string)` | <pre>[<br>  "A",<br>  "B",<br>  "C",<br>  "D"<br>]</pre> | no |
 | tags | n/a | `map(string)` | `{}` | no |

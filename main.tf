@@ -99,7 +99,7 @@ locals {
       timeout = 20
       environment_variables = {
         Region                    = var.region
-        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+        gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
         vmseries_api_key          = var.vmseries_api_key
         panorama_ip_1             = var.panorama_ip_1
         panorama_ip_2             = var.panorama_ip_2
@@ -115,7 +115,7 @@ locals {
       timeout = 900
       environment_variables = {
         Region                    = var.region
-        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+        gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
         vmseries_api_key          = var.vmseries_api_key
         panorama_ip_1             = "172.30.0.10"
         panorama_ip_2             = "172.30.1.10"
@@ -204,7 +204,7 @@ locals {
 
       environment_variables = {
         Region                    = var.region
-        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+        gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
       }
     }
 
@@ -214,7 +214,7 @@ locals {
 
       environment_variables = {
         Region                    = var.region
-        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+        gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
       }
     }
 
@@ -246,7 +246,7 @@ locals {
 
       environment_variables = {
         Region                    = var.region
-        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+        gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
       }
     }
 
@@ -256,7 +256,7 @@ locals {
 
       environment_variables = {
         Region                    = var.region
-        gp_client_ip_pool_db_name = var.gp_client_ip_pool_db_name
+        gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
       }
     }
 
