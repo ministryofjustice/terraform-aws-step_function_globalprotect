@@ -208,6 +208,15 @@ locals {
       }
     }
 
+    create_route = {
+      handler = "create_route.lambda_handler"
+      timeout = 10
+
+      environment_variables = {
+        TGW_RTB_ID = var.tgw_rtb_id
+      }
+    }
+
     release_db = {
       handler = "release_db.lambda_handler"
       timeout = 10
@@ -257,6 +266,15 @@ locals {
       environment_variables = {
         Region                    = var.region
         gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
+      }
+    }
+
+    delete_route = {
+      handler = "delete_route.lambda_handler"
+      timeout = 10
+
+      environment_variables = {
+        TGW_RTB_ID = var.tgw_rtb_id
       }
     }
 
@@ -358,6 +376,12 @@ resource "aws_sfn_state_machine" "sfn" {
     "reserve_record": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["reserve_record"].arn}",
+      "Next": "create_route",
+      "TimeoutSeconds": 10
+    },
+    "create_route": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["create_route"].arn}",
       "Next": "config_fw",
       "TimeoutSeconds": 10
     },
@@ -437,6 +461,12 @@ resource "aws_sfn_state_machine" "sfn" {
     "query_db": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["query_db"].arn}",
+      "Next": "delete_route",
+      "TimeoutSeconds": 10
+    },
+    "delete_route": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["delete_route"].arn}",
       "Next": "delete_dns",
       "TimeoutSeconds": 10
     },

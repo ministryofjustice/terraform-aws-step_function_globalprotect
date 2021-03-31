@@ -115,7 +115,7 @@ variable "gp_pool_subnet_mask" {
 variable "subnets_to_skip" {
   type        = string
   description = "Number of sunets to skip (10.184.0.0/21, 10.184.8.0/21)"
-  default     = 2
+  default     = 0
 }
 
 variable "availability_zones" {
@@ -132,5 +132,10 @@ variable "suffix_map" {
 variable "gp_gateway_hostname_template" {
   type    = string
   default = "MOJ-AW2-FW%02d%s"
+}
+
+variable "tgw_rtb_id" {
+  description = "ID of the transit gateway route table"
+  type        = string
 }
 

@@ -37,9 +37,10 @@ No requirements.
 | region | lambda region | `string` | `"eu-west-2"` | no |
 | runtime | The identifier of the function's runtime | `string` | `"python3.6"` | no |
 | security\_group\_ids | A list of security group IDs associated with the Lambda function | `list(string)` | n/a | yes |
-| subnets\_to\_skip | Number of sunets to skip (10.184.0.0/21, 10.184.8.0/21) | `string` | `2` | no |
+| subnets\_to\_skip | Number of sunets to skip (10.184.0.0/21, 10.184.8.0/21) | `string` | `0` | no |
 | suffix\_map | n/a | `list(string)` | <pre>[<br>  "A",<br>  "B",<br>  "C",<br>  "D"<br>]</pre> | no |
 | tags | n/a | `map(string)` | `{}` | no |
+| tgw\_rtb\_id | ID of the transit gateway route table | `string` | n/a | yes |
 | vmseries\_api\_key\_ssm\_key | VM-series bootstrap admin user's api key is stored under this parameter name in SSM | `string` | n/a | yes |
 
 ## Outputs
