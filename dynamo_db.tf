@@ -5,7 +5,7 @@ locals {
   # Prep entries for GP gateway table
   gateway_map = flatten([
     # for i in range(42) :
-    for i in range(4) :
+    for i in range(local.newbits) :
     [for j in range(length(var.availability_zones)) : {
       Hostname       = format(var.gp_gateway_hostname_template, i + 1, element(var.suffix_map, j))
       DNSPrefix      = "gw-${lower(element(var.suffix_map, j))}${format("%02d", i + 1)}"
