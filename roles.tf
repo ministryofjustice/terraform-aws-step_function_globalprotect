@@ -245,7 +245,7 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
           "ssm:GetParameter"
         ],
         "Resource": [
-          "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/autoscaling*"
+          "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/autoscaling*"
         ]
       }
     ]
