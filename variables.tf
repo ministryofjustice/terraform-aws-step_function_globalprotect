@@ -24,13 +24,13 @@ variable "security_group_ids" {
   type        = list(string)
 }
 
-variable "vmseries_api_key" {
-  description = "VM-series bootstrap admin user's api key"
+variable "vmseries_api_key_ssm_key" {
+  description = "VM-series bootstrap admin user's api key is stored under this parameter name in SSM"
   type        = string
 }
 
-variable "panorama_api_key" {
-  description = "Panorama aws_lambda user's api key"
+variable "panorama_api_key_ssm_key" {
+  description = "Panorama aws_lambda user's api key is stored under this parameter name in SSM"
   type        = string
 }
 

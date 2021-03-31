@@ -30,7 +30,7 @@ No requirements.
 | layer\_function\_build\_dir | layer function zip directory | `string` | `"package"` | no |
 | layer\_function\_dir | Local dir name of the lambda layer function | `string` | `"lambda_layer_function"` | no |
 | name | name to prepend to lambda functions and state machine | `string` | n/a | yes |
-| panorama\_api\_key | Panorama aws\_lambda user's api key | `string` | n/a | yes |
+| panorama\_api\_key\_ssm\_key | Panorama aws\_lambda user's api key is stored under this parameter name in SSM | `string` | n/a | yes |
 | panorama\_ip\_1 | Panorama IP 1 | `string` | n/a | yes |
 | panorama\_ip\_2 | Panorama IP 2 | `string` | n/a | yes |
 | public\_ipv4\_pool | n/a | `string` | `"amazon"` | no |
@@ -40,7 +40,7 @@ No requirements.
 | subnets\_to\_skip | Number of sunets to skip (10.184.0.0/21, 10.184.8.0/21) | `string` | `2` | no |
 | suffix\_map | n/a | `list(string)` | <pre>[<br>  "A",<br>  "B",<br>  "C",<br>  "D"<br>]</pre> | no |
 | tags | n/a | `map(string)` | `{}` | no |
-| vmseries\_api\_key | VM-series bootstrap admin user's api key | `string` | n/a | yes |
+| vmseries\_api\_key\_ssm\_key | VM-series bootstrap admin user's api key is stored under this parameter name in SSM | `string` | n/a | yes |
 
 ## Outputs
 

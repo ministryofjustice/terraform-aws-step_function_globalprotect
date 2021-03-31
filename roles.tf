@@ -1,3 +1,6 @@
+# Get caller identity for account ID
+data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role" "sfn_execution_role" {
   name = "${var.name}-sfn-execution-role"
   path = "/"
@@ -226,6 +229,23 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
         ],
         "Resource": [
           "*"
+        ]
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+          "ssm:DescribeParameters"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+          "ssm:GetParameters",
+          "ssm:GetParameter"
+        ],
+        "Resource": [
+          "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/autoscaling*"
         ]
       }
     ]

@@ -100,7 +100,7 @@ locals {
       environment_variables = {
         Region                    = var.region
         gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
-        vmseries_api_key          = var.vmseries_api_key
+        vmseries_api_key_ssm_key  = var.vmseries_api_key_ssm_key
         panorama_ip_1             = var.panorama_ip_1
         panorama_ip_2             = var.panorama_ip_2
       }
@@ -116,7 +116,7 @@ locals {
       environment_variables = {
         Region                    = var.region
         gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
-        vmseries_api_key          = var.vmseries_api_key
+        vmseries_api_key_ssm_key  = var.vmseries_api_key_ssm_key
         panorama_ip_1             = "172.30.0.10"
         panorama_ip_2             = "172.30.1.10"
       }
@@ -130,11 +130,11 @@ locals {
       handler = "config_panorama.lambda_handler"
       timeout = 600
       environment_variables = {
-        panorama_api_key = var.panorama_api_key
-        panorama_ip_1    = "172.30.0.10"
-        panorama_ip_2    = "172.30.1.10"
-        tpl_stk          = "MOJ AWS GP Gateway Stack"
-        device_group     = "MOJ AWS GP Gateway Firewalls"
+        panorama_api_key_ssm_key = var.panorama_api_key_ssm_key
+        panorama_ip_1            = "172.30.0.10"
+        panorama_ip_2            = "172.30.1.10"
+        tpl_stk                  = "MOJ AWS GP Gateway Stack"
+        device_group             = "MOJ AWS GP Gateway Firewalls"
       }
       vpc_config = {
         subnet_ids         = var.lambda_subnet_ids
@@ -146,9 +146,9 @@ locals {
       handler = "deactivate_license.lambda_handler"
       timeout = 300
       environment_variables = {
-        panorama_api_key = var.panorama_api_key
-        panorama_ip_1    = "172.30.0.10"
-        panorama_ip_2    = "172.30.1.10"
+        panorama_api_key_ssm_key = var.panorama_api_key_ssm_key
+        panorama_ip_1            = "172.30.0.10"
+        panorama_ip_2            = "172.30.1.10"
       }
       vpc_config = {
         subnet_ids         = var.lambda_subnet_ids
@@ -160,11 +160,11 @@ locals {
       handler = "cleanup_panorama.lambda_handler"
       timeout = 600
       environment_variables = {
-        panorama_api_key = var.panorama_api_key
-        panorama_ip_1    = "172.30.0.10"
-        panorama_ip_2    = "172.30.1.10"
-        tpl_stk          = "MOJ AWS GP Gateway Stack"
-        device_group     = "MOJ AWS GP Gateway Firewalls"
+        panorama_api_key_ssm_key = var.panorama_api_key_ssm_key
+        panorama_ip_1            = "172.30.0.10"
+        panorama_ip_2            = "172.30.1.10"
+        tpl_stk                  = "MOJ AWS GP Gateway Stack"
+        device_group             = "MOJ AWS GP Gateway Firewalls"
       }
       vpc_config = {
         subnet_ids         = var.lambda_subnet_ids
