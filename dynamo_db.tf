@@ -52,9 +52,9 @@ resource "aws_dynamodb_table_item" "gp" {
     "Available"      = { "S" = "YES" }
   })
 
-  lifecycle {
-    ignore_changes = [
-      item,
-    ]
-  }
+  # lifecycle {
+  #   ignore_changes = [
+  #     item,
+  #   ]
+  # }
 }
