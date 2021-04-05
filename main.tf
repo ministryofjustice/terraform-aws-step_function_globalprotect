@@ -269,6 +269,16 @@ locals {
       }
     }
 
+    reset_db = {
+      handler = "reset_db.lambda_handler"
+      timeout = 10
+
+      environment_variables = {
+        Region                    = var.region
+        gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
+      }
+    }
+
     delete_route = {
       handler = "delete_route.lambda_handler"
       timeout = 10
@@ -349,7 +359,7 @@ resource "aws_sfn_state_machine" "sfn" {
         {
           "Variable": "$.LifecycleTransition",
           "StringEquals": "autoscaling:EC2_INSTANCE_LAUNCHING",
-          "Next": "create_eni"
+          "Next": "reserve_record"
         },
         {
           "Variable": "$.LifecycleTransition",
@@ -359,10 +369,24 @@ resource "aws_sfn_state_machine" "sfn" {
       ],
       "Default": "cfn_success"
     },
+    "reserve_record": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["reserve_record"].arn}",
+      "Next": "create_eni",
+      "TimeoutSeconds": 10,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "cfn_fail"
+        }
+      ]
+    },
     "create_eni": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["create_eni"].arn}",
-      "Next": "reserve_record",
+      "Next": "create_route",
       "TimeoutSeconds": 300,
       "Catch": [
         {
@@ -372,12 +396,6 @@ resource "aws_sfn_state_machine" "sfn" {
           "Next": "cfn_fail"
         }
       ]
-    },
-    "reserve_record": {
-      "Type": "Task",
-      "Resource": "${aws_lambda_function.this["reserve_record"].arn}",
-      "Next": "create_route",
-      "TimeoutSeconds": 10
     },
     "create_route": {
       "Type": "Task",
