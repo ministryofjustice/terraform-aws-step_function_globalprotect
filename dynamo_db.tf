@@ -44,7 +44,7 @@ resource "aws_dynamodb_table" "gp" {
 }
 
 resource "aws_dynamodb_table_item" "gp" {
-  for_each   = { for i in local.gateway_map : i.Hostname => i }
+  for_each   = { for i in local.gateway_map : i.ClientPoolIPv4 => i }
   table_name = aws_dynamodb_table.gp.name
   hash_key   = aws_dynamodb_table.gp.hash_key
 
