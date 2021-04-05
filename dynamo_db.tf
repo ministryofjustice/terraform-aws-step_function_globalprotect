@@ -16,7 +16,7 @@ locals {
   #     GP_TUNNEL_IP = split("/", cidrsubnet(var.gp_pool_supernet_cidr_range_ipv4, local.newbits, (i * length(var.availability_zones)) + j + var.subnets_to_skip))[0]
   #   }]
   # ])
-  gateway_map = [for i in pow(2, local.newbits) : {
+  gateway_map = [for i in range(pow(2, local.newbits)) : {
     Hostname       = ""
     DNSPrefix      = ""
     AZ             = ""
