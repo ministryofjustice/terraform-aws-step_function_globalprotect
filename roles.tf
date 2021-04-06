@@ -247,6 +247,15 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
         "Resource": [
           "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/autoscaling*"
         ]
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+          "autoscaling:CompleteLifecycleAction"
+        ],
+        "Resource": [
+          "arn:aws:autoscaling:${var.region}:${data.aws_caller_identity.current.account_id}:autoScalingGroup*"
+        ]
       }
     ]
 }
