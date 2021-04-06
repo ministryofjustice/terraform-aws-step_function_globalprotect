@@ -628,11 +628,6 @@ resource "aws_sfn_state_machine" "sfn" {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["cfn_success"].arn}",
       "End": true
-    },
-    "FailState": {
-      "Type": "Fail",
-      "Cause": "Failed",
-      "Error": "Creation Error"
     }
   }
 }
