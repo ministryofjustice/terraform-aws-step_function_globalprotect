@@ -629,11 +629,6 @@ resource "aws_sfn_state_machine" "sfn" {
       "Resource": "${aws_lambda_function.this["cfn_success"].arn}",
       "End": true
     },
-    "cfn_fail": {
-      "Type": "Task",
-      "Resource": "${aws_lambda_function.this["cfn_fail"].arn}",
-      "Next": "FailState"
-    },
     "FailState": {
       "Type": "Fail",
       "Cause": "Failed",
