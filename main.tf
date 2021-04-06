@@ -364,7 +364,7 @@ resource "aws_sfn_state_machine" "sfn" {
         {
           "Variable": "$.LifecycleTransition",
           "StringEquals": "autoscaling:EC2_INSTANCE_TERMINATING",
-          "Next": "delete_eni"
+          "Next": "query_db"
         }
       ],
       "Default": "cfn_success"
@@ -379,7 +379,8 @@ resource "aws_sfn_state_machine" "sfn" {
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "cfn_fail"
+          "Next": "release_db",
+          "ResultPath": "$.error"
         }
       ]
     },
@@ -391,9 +392,10 @@ resource "aws_sfn_state_machine" "sfn" {
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
+            "States.ALL"
           ],
-          "Next": "cfn_fail"
+          "Next": "delete_eni",
+          "ResultPath": "$.error"
         }
       ]
     },
@@ -401,7 +403,16 @@ resource "aws_sfn_state_machine" "sfn" {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["create_route"].arn}",
       "Next": "config_fw",
-      "TimeoutSeconds": 10
+      "TimeoutSeconds": 10,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "delete_route",
+          "ResultPath": "$.error"
+        }
+      ]
     },
     "config_fw": {
       "Type": "Task",
@@ -420,7 +431,8 @@ resource "aws_sfn_state_machine" "sfn" {
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "cfn_fail"
+          "Next": "delete_route",
+          "ResultPath": "$.error"
         }
       ]
     },
@@ -442,7 +454,8 @@ resource "aws_sfn_state_machine" "sfn" {
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "cfn_fail"
+          "Next": "delete_route",
+          "ResultPath": "$.error"
         }
       ]
     },
@@ -450,67 +463,166 @@ resource "aws_sfn_state_machine" "sfn" {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["update_db"].arn}",
       "Next": "update_ec2_name",
-      "TimeoutSeconds": 10
+      "TimeoutSeconds": 10,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "deactivate_license",
+          "ResultPath": "$.error"
+        }
+      ]
     },
     "update_ec2_name": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["update_ec2_name"].arn}",
       "Next": "config_panorama",
-      "TimeoutSeconds": 10
+      "TimeoutSeconds": 10,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "deactivate_license",
+          "ResultPath": "$.error"
+        }
+      ]
     },
     "config_panorama": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["config_panorama"].arn}",
       "Next": "create_dns",
-      "TimeoutSeconds": 300
+      "TimeoutSeconds": 300,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "cleanup_panorama",
+          "ResultPath": "$.error"
+        }
+      ]
     },
     "create_dns": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["create_dns"].arn}",
       "Next": "cfn_success",
-      "TimeoutSeconds": 60
-    },
-    "delete_eni": {
-      "Type": "Task",
-      "Resource": "${aws_lambda_function.this["delete_eni"].arn}",
-      "Next": "query_db",
-      "TimeoutSeconds": 300
+      "TimeoutSeconds": 60,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "delete_dns",
+          "ResultPath": "$.error"
+        }
+      ]
     },
     "query_db": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["query_db"].arn}",
-      "Next": "delete_route",
-      "TimeoutSeconds": 10
-    },
-    "delete_route": {
-      "Type": "Task",
-      "Resource": "${aws_lambda_function.this["delete_route"].arn}",
       "Next": "delete_dns",
-      "TimeoutSeconds": 10
+      "TimeoutSeconds": 10,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "delete_dns",
+          "ResultPath": "$.error"
+        }
+      ]
     },
     "delete_dns": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["delete_dns"].arn}",
-      "Next": "deactivate_license",
-      "TimeoutSeconds": 10
-    },
-    "deactivate_license": {
-      "Type": "Task",
-      "Resource": "${aws_lambda_function.this["deactivate_license"].arn}",
       "Next": "cleanup_panorama",
-      "TimeoutSeconds": 10
+      "TimeoutSeconds": 10,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "cleanup_panorama",
+          "ResultPath": "$.error"
+        }
+      ]
     },
     "cleanup_panorama": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["cleanup_panorama"].arn}",
+      "Next": "deactivate_license",
+      "TimeoutSeconds": 20,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "deactivate_license",
+          "ResultPath": "$.error"
+        }
+      ]
+    },
+    "deactivate_license": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["deactivate_license"].arn}",
+      "Next": "delete_route",
+      "TimeoutSeconds": 10,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "delete_route",
+          "ResultPath": "$.error"
+        }
+      ]
+    },
+    "delete_route": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["delete_route"].arn}",
+      "Next": "delete_eni",
+      "TimeoutSeconds": 10,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "delete_eni",
+          "ResultPath": "$.error"
+        }
+      ]
+    },
+    "delete_eni": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["delete_eni"].arn}",
       "Next": "release_db",
-      "TimeoutSeconds": 20
+      "TimeoutSeconds": 300,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "release_db",
+          "ResultPath": "$.error"
+        }
+      ]
     },
     "release_db": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["release_db"].arn}",
       "Next": "cfn_success",
-      "TimeoutSeconds": 20
+      "TimeoutSeconds": 20,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "cfn_success",
+          "ResultPath": "$.error"
+        }
+      ]
     },
     "cfn_success": {
       "Type": "Task",
