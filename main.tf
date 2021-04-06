@@ -293,13 +293,8 @@ locals {
       timeout = 10
     }
 
-    cfn_success = {
-      handler = "cfn_success.lambda_handler"
-      timeout = 600
-    }
-
-    cfn_fail = {
-      handler = "cfn_fail.lambda_handler"
+    asg_respond = {
+      handler = "asg_respond.lambda_handler"
       timeout = 10
     }
   }
@@ -367,7 +362,7 @@ resource "aws_sfn_state_machine" "sfn" {
           "Next": "query_db"
         }
       ],
-      "Default": "cfn_success"
+      "Default": "asg_respond"
     },
     "reserve_record": {
       "Type": "Task",
@@ -507,7 +502,7 @@ resource "aws_sfn_state_machine" "sfn" {
     "create_dns": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["create_dns"].arn}",
-      "Next": "cfn_success",
+      "Next": "asg_respond",
       "TimeoutSeconds": 60,
       "Catch": [
         {
@@ -612,21 +607,21 @@ resource "aws_sfn_state_machine" "sfn" {
     "release_db": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["release_db"].arn}",
-      "Next": "cfn_success",
+      "Next": "asg_respond",
       "TimeoutSeconds": 20,
       "Catch": [
         {
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "cfn_success",
+          "Next": "asg_respond",
           "ResultPath": "$.error"
         }
       ]
     },
-    "cfn_success": {
+    "asg_respond": {
       "Type": "Task",
-      "Resource": "${aws_lambda_function.this["cfn_success"].arn}",
+      "Resource": "${aws_lambda_function.this["asg_respond"].arn}",
       "End": true
     }
   }
