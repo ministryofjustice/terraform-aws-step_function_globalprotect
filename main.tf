@@ -532,6 +532,21 @@ resource "aws_sfn_state_machine" "sfn" {
     "delete_dns": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["delete_dns"].arn}",
+      "Next": "deactivate_license",
+      "TimeoutSeconds": 10,
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "deactivate_license",
+          "ResultPath": "$.error"
+        }
+      ]
+    },
+    "deactivate_license": {
+      "Type": "Task",
+      "Resource": "${aws_lambda_function.this["deactivate_license"].arn}",
       "Next": "cleanup_panorama",
       "TimeoutSeconds": 10,
       "Catch": [
@@ -547,23 +562,8 @@ resource "aws_sfn_state_machine" "sfn" {
     "cleanup_panorama": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["cleanup_panorama"].arn}",
-      "Next": "deactivate_license",
-      "TimeoutSeconds": 20,
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "deactivate_license",
-          "ResultPath": "$.error"
-        }
-      ]
-    },
-    "deactivate_license": {
-      "Type": "Task",
-      "Resource": "${aws_lambda_function.this["deactivate_license"].arn}",
       "Next": "delete_route",
-      "TimeoutSeconds": 10,
+      "TimeoutSeconds": 20,
       "Catch": [
         {
           "ErrorEquals": [
