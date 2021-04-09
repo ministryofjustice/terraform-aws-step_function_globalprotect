@@ -100,7 +100,7 @@ locals {
       environment_variables = {
         Region                    = var.region
         gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
-        data                      = local.gateway_map
+        data                      = jsonencode(local.gateway_map)
       }
     }
 
