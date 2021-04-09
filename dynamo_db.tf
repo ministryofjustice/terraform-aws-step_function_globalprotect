@@ -43,27 +43,27 @@ resource "aws_dynamodb_table" "gp" {
   tags = var.tags
 }
 
-resource "aws_dynamodb_table_item" "gp" {
-  for_each   = { for i in local.gateway_map : i.ClientPoolIPv4 => i }
-  table_name = aws_dynamodb_table.gp.name
-  hash_key   = aws_dynamodb_table.gp.hash_key
+# resource "aws_dynamodb_table_item" "gp" {
+#   for_each   = { for i in local.gateway_map : i.ClientPoolIPv4 => i }
+#   table_name = aws_dynamodb_table.gp.name
+#   hash_key   = aws_dynamodb_table.gp.hash_key
 
-  item = jsonencode({
-    "Hostname"       = { "S" = each.value.Hostname },
-    "Serial"         = { "S" = "" },
-    "InstanceId"     = { "S" = "" },
-    "PublicIP"       = { "S" = "" },
-    "DNSPrefix"      = { "S" = each.value.DNSPrefix },
-    "AZ"             = { "S" = each.value.AZ },
-    "ClientPoolIPv4" = { "S" = each.value.ClientPoolIPv4 },
-    "ClientPoolIPv6" = { "S" = each.value.ClientPoolIPv6 },
-    "GP_TUNNEL_IP"   = { "S" = each.value.GP_TUNNEL_IP }
-    "Available"      = { "S" = "YES" }
-  })
+#   item = jsonencode({
+#     "Hostname"       = { "S" = each.value.Hostname },
+#     "Serial"         = { "S" = "" },
+#     "InstanceId"     = { "S" = "" },
+#     "PublicIP"       = { "S" = "" },
+#     "DNSPrefix"      = { "S" = each.value.DNSPrefix },
+#     "AZ"             = { "S" = each.value.AZ },
+#     "ClientPoolIPv4" = { "S" = each.value.ClientPoolIPv4 },
+#     "ClientPoolIPv6" = { "S" = each.value.ClientPoolIPv6 },
+#     "GP_TUNNEL_IP"   = { "S" = each.value.GP_TUNNEL_IP }
+#     "Available"      = { "S" = "YES" }
+#   })
 
-  lifecycle {
-    ignore_changes = [
-      item,
-    ]
-  }
-}
+#   lifecycle {
+#     ignore_changes = [
+#       item,
+#     ]
+#   }
+# }

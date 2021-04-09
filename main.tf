@@ -94,6 +94,16 @@ locals {
       }
     }
 
+    init_db = {
+      handler = "init_db.lambda_handler"
+      timeout = 60
+      environment_variables = {
+        Region                    = var.region
+        gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
+        data                      = local.gateway_map
+      }
+    }
+
     config_fw = {
       handler = "config_fw.lambda_handler"
       timeout = 20
