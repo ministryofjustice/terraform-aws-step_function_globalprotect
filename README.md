@@ -19,7 +19,7 @@ No requirements.
 | availability\_zones | (optional) availability zones in the region | `list(string)` | <pre>[<br>  "eu-west-2a",<br>  "eu-west-2b",<br>  "eu-west-2c"<br>]</pre> | no |
 | aws\_route53\_zone | DNS host zone | `string` | n/a | yes |
 | development | Creates zip archives to make developer's life easier | `bool` | `false` | no |
-| gp\_client\_ip\_pools | n/a | `map(string)` | `{}` | no |
+| gp\_client\_ip\_pools | n/a | `list(string)` | `[]` | no |
 | gp\_gateway\_hostname\_template | n/a | `string` | `"MOJ-AW2-FW%02d%s"` | no |
 | host\_zone\_id | DNS host zone ID | `string` | n/a | yes |
 | lambda\_function\_dir | Local dir name of the lambda functions | `string` | n/a | yes |
