@@ -1,6 +1,6 @@
 locals {
 
-  newbits = trim(var.gp_pool_subnet_mask, "/") - split("/", var.gp_pool_supernet_cidr_range_ipv4)[1]
+  # newbits = trim(var.gp_pool_subnet_mask, "/") - split("/", var.gp_pool_supernet_cidr_range_ipv4)[1]
 
   # Prep entries for GP gateway table
   # gateway_map = flatten([
@@ -16,14 +16,28 @@ locals {
   #     GP_TUNNEL_IP = split("/", cidrsubnet(var.gp_pool_supernet_cidr_range_ipv4, local.newbits, (i * length(var.availability_zones)) + j + var.subnets_to_skip))[0]
   #   }]
   # ])
-  gateway_map = [for i in range(pow(2, local.newbits)) : {
-    Hostname       = ""
-    DNSPrefix      = ""
-    AZ             = ""
-    ClientPoolIPv4 = cidrsubnet(var.gp_pool_supernet_cidr_range_ipv4, local.newbits, i)
-    ClientPoolIPv6 = ""
-    GP_TUNNEL_IP   = split("/", cidrsubnet(var.gp_pool_supernet_cidr_range_ipv4, local.newbits, i))[0]
-  }]
+  # gateway_map = [for i in range(pow(2, local.newbits)) : {
+  #   Hostname       = ""
+  #   DNSPrefix      = ""
+  #   AZ             = ""
+  #   ClientPoolIPv4 = cidrsubnet(var.gp_pool_supernet_cidr_range_ipv4, local.newbits, i)
+  #   ClientPoolIPv6 = ""
+  #   GP_TUNNEL_IP   = split("/", cidrsubnet(var.gp_pool_supernet_cidr_range_ipv4, local.newbits, i))[0]
+  # }]
+
+  # Add support to expand pool ranges with extra CIDR ranges in future
+  gateway_map = flatten([
+    for net in var.gp_client_ip_pools :
+    [for i in range(pow(2, trim(net.new_prefix, "/") - split("/", net.cidr)[1])) : {
+      ClientPoolIPv4 = cidrsubnet(net.cidr, trim(net.new_prefix, "/") - split("/", net.cidr)[1], i)
+      ClientPoolIPv6 = ""
+      Hostname       = ""
+      DNSPrefix      = ""
+      AZ             = ""
+      GP_TUNNEL_IP   = split("/", cidrsubnet(net.cidr, trim(net.new_prefix, "/") - split("/", net.cidr)[1], i))[0]
+      }
+    ]
+  ])
 
 }
 

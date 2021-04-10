@@ -99,23 +99,9 @@ variable "public_ipv4_pool" {
   default = "amazon"
 }
 
-
-variable "gp_pool_supernet_cidr_range_ipv4" {
-  type        = string
-  description = "Supernet of the GlobalProtect Client IP pool subnets"
-  default     = "10.184.0.0/14"
-}
-
-variable "gp_pool_subnet_mask" {
-  type    = string
-  default = "/7"
-}
-
-
-variable "subnets_to_skip" {
-  type        = string
-  description = "Number of sunets to skip (10.184.0.0/21, 10.184.8.0/21)"
-  default     = 0
+variable "gp_client_ip_pools" {
+  type    = map(string)
+  default = {}
 }
 
 variable "availability_zones" {
