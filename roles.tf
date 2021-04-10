@@ -138,7 +138,8 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
           "dynamodb:Scan",
           "dynamodb:TagResource",
           "dynamodb:UpdateItem",
-          "dynamodb:UpdateTable"
+          "dynamodb:UpdateTable",
+          "dyanmodb:BatchWriteItem"
         ],
         "Resource": [
           "*"
