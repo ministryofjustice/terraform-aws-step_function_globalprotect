@@ -100,7 +100,7 @@ variable "public_ipv4_pool" {
 }
 
 variable "gp_client_ip_pools" {
-  type    = list(string)
+  type    = list(any)
   default = []
 }
 
