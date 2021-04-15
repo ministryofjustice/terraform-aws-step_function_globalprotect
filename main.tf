@@ -311,10 +311,6 @@ locals {
     cloudwatch_alarm_switch = {
       handler = "cloudwatch_alarm_switch.lambda_handler"
       timeout = 60
-
-      environment_variables = {
-        AlarmName = "GP_active_tunnel-low"
-      }
     }
   }
 
