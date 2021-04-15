@@ -279,16 +279,6 @@ locals {
       }
     }
 
-    reset_db = {
-      handler = "reset_db.lambda_handler"
-      timeout = 10
-
-      environment_variables = {
-        Region                    = var.region
-        gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
-      }
-    }
-
     delete_route = {
       handler = "delete_route.lambda_handler"
       timeout = 10
