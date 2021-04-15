@@ -62,7 +62,7 @@ No modules.
 | <a name="input_panorama_ip_2"></a> [panorama\_ip\_2](#input\_panorama\_ip\_2) | Panorama IP 2 | `string` | n/a | yes |
 | <a name="input_public_ipv4_pool"></a> [public\_ipv4\_pool](#input\_public\_ipv4\_pool) | n/a | `string` | `"amazon"` | no |
 | <a name="input_region"></a> [region](#input\_region) | lambda region | `string` | `"eu-west-2"` | no |
-| <a name="input_reset_db"></a> [reset\_db](#input\_reset\_db) | Flag to reset GlobalProtect GP Dynamo DB | `bool` | `false` | no |
+| <a name="input_reset_db_input"></a> [reset\_db\_input](#input\_reset\_db\_input) | Flag to reset GlobalProtect GP Dynamo DB | `map(string)` | `{}` | no |
 | <a name="input_runtime"></a> [runtime](#input\_runtime) | The identifier of the function's runtime | `string` | `"python3.6"` | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | A list of security group IDs associated with the Lambda function | `list(string)` | n/a | yes |
 | <a name="input_suffix_map"></a> [suffix\_map](#input\_suffix\_map) | n/a | `list(string)` | <pre>[<br>  "A",<br>  "B",<br>  "C",<br>  "D"<br>]</pre> | no |

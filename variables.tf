@@ -132,8 +132,11 @@ variable "cloudwatch_alarm_switch_cron" {
 }
 
 # DO NOT MODIFY THIS VARIABLE IF YOU DO NOT FULLY UNDERSTAND THE CHANGE
-variable "reset_db" {
+variable "reset_db_input" {
   description = "Flag to reset GlobalProtect GP Dynamo DB"
-  type        = bool
-  default     = false
+  type        = map(string)
+  default     = {}
+  # default = {
+  #   reset_db = True
+  # }
 }

@@ -84,6 +84,6 @@ resource "aws_dynamodb_table" "gp" {
 
 data "aws_lambda_invocation" "this" {
   function_name = "${var.name}-init_db"
-  input         = jsonencode(var.reset_db == true ? { reset = True } : {})
+  input         = jsonencode(var.reset_db_input)
   depends_on    = [aws_lambda_function.this]
 }
