@@ -20,6 +20,8 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [aws_cloudwatch_event_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
+| [aws_cloudwatch_event_target.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_dynamodb_table.gp](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table) | resource |
 | [aws_iam_role.lambda_execution_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.sfn_execution_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -42,6 +44,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_availability_zones"></a> [availability\_zones](#input\_availability\_zones) | (optional) availability zones in the region | `list(string)` | <pre>[<br>  "eu-west-2a",<br>  "eu-west-2b",<br>  "eu-west-2c"<br>]</pre> | no |
 | <a name="input_aws_route53_zone"></a> [aws\_route53\_zone](#input\_aws\_route53\_zone) | DNS host zone | `string` | n/a | yes |
+| <a name="input_cloudwatch_alarm_switch_cron"></a> [cloudwatch\_alarm\_switch\_cron](#input\_cloudwatch\_alarm\_switch\_cron) | Cron schedule to run CloudWatch Event rule which inturn will trigger a lambda function to enable/disable GP scale in event | `string` | `"0 2,58 7,20 ? * MON,TUE,WED,THU,FRI *"` | no |
 | <a name="input_development"></a> [development](#input\_development) | Creates zip archives to make developer's life easier | `bool` | `false` | no |
 | <a name="input_gp_client_ip_pools"></a> [gp\_client\_ip\_pools](#input\_gp\_client\_ip\_pools) | n/a | `list(any)` | `[]` | no |
 | <a name="input_gp_gateway_hostname_template"></a> [gp\_gateway\_hostname\_template](#input\_gp\_gateway\_hostname\_template) | n/a | `string` | `"MOJ-AW2-FW%02d%s"` | no |

@@ -645,3 +645,17 @@ EOF
 
   depends_on = [aws_lambda_function.this]
 }
+
+resource "aws_cloudwatch_event_rule" "this" {
+  name        = "cloudwatch_alarm_switch"
+  description = "Enabled/Disable GlobalProtect autoscaling scale in events between 0800h and 2000h GMT"
+
+  schedule_expression = cron(var.cloudwatch_alarm_switch_cron)
+}
+
+resource "aws_cloudwatch_event_target" "this" {
+  arn  = aws_lambda_function.this["cloudwatch_alarm_switch"].arn
+  rule = aws_cloudwatch_event_rule.this.id
+
+  depends_on = [aws_lambda_function.this]
+}

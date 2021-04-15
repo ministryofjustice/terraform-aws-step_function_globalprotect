@@ -125,3 +125,9 @@ variable "tgw_rtb_id" {
   type        = string
 }
 
+variable "cloudwatch_alarm_switch_cron" {
+  description = "Cron schedule to run CloudWatch Event rule which inturn will trigger a lambda function to enable/disable GP scale in event"
+  type        = string
+  default     = "0 2,58 7,20 ? * MON,TUE,WED,THU,FRI *"
+}
+
