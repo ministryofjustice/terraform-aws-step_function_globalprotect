@@ -131,3 +131,9 @@ variable "cloudwatch_alarm_switch_cron" {
   default     = "0 2,58 7,20 ? * MON,TUE,WED,THU,FRI *"
 }
 
+# DO NOT MODIFY THIS VARIABLE IF YOU DO NOT FULLY UNDERSTAND THE CHANGE
+variable "reset_db" {
+  description = "Flag to reset GlobalProtect GP Dynamo DB"
+  type        = bool
+  default     = false
+}
