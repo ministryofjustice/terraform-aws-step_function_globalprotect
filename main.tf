@@ -502,7 +502,7 @@ resource "aws_sfn_state_machine" "sfn" {
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "cleanup_panorama",
+          "Next": "deactivate_license",
           "ResultPath": "$.error"
         }
       ]
