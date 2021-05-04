@@ -69,6 +69,8 @@ No modules.
 | <a name="input_suffix_map"></a> [suffix\_map](#input\_suffix\_map) | n/a | `list(string)` | <pre>[<br>  "A",<br>  "B",<br>  "C",<br>  "D"<br>]</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(string)` | `{}` | no |
 | <a name="input_tgw_rtb_id"></a> [tgw\_rtb\_id](#input\_tgw\_rtb\_id) | ID of the transit gateway route table | `string` | n/a | yes |
+| <a name="input_userid_agent_secret_ssm_key"></a> [userid\_agent\_secret\_ssm\_key](#input\_userid\_agent\_secret\_ssm\_key) | User-ID collector pre-shared key is stored under this parameter name in SSM | `string` | n/a | yes |
+| <a name="input_userid_collector_name_ssm_key"></a> [userid\_collector\_name\_ssm\_key](#input\_userid\_collector\_name\_ssm\_key) | User-ID collector name is stored under this parameter name in SSM | `string` | n/a | yes |
 | <a name="input_vmseries_api_key_ssm_key"></a> [vmseries\_api\_key\_ssm\_key](#input\_vmseries\_api\_key\_ssm\_key) | VM-series bootstrap admin user's api key is stored under this parameter name in SSM | `string` | n/a | yes |
 
 ## Outputs

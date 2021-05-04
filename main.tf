@@ -140,11 +140,13 @@ locals {
       handler = "config_panorama.lambda_handler"
       timeout = 600
       environment_variables = {
-        panorama_api_key_ssm_key = var.panorama_api_key_ssm_key
-        panorama_ip_1            = "172.30.0.10"
-        panorama_ip_2            = "172.30.1.10"
-        tpl_stk                  = "MOJ AWS GP Gateway Stack"
-        device_group             = "MOJ AWS GP Gateway Firewalls"
+        panorama_api_key_ssm_key      = var.panorama_api_key_ssm_key
+        userid_collector_name_ssm_key = var.userid_collector_name_ssm_key
+        userid_agent_secret_ssm_key   = var.userid_agent_secret_ssm_key
+        panorama_ip_1                 = "172.30.0.10"
+        panorama_ip_2                 = "172.30.1.10"
+        tpl_stk                       = "MOJ AWS GP Gateway Stack"
+        device_group                  = "MOJ AWS GP Gateway Firewalls"
       }
       vpc_config = {
         subnet_ids         = var.lambda_subnet_ids
@@ -170,11 +172,13 @@ locals {
       handler = "cleanup_panorama.lambda_handler"
       timeout = 600
       environment_variables = {
-        panorama_api_key_ssm_key = var.panorama_api_key_ssm_key
-        panorama_ip_1            = "172.30.0.10"
-        panorama_ip_2            = "172.30.1.10"
-        tpl_stk                  = "MOJ AWS GP Gateway Stack"
-        device_group             = "MOJ AWS GP Gateway Firewalls"
+        panorama_api_key_ssm_key      = var.panorama_api_key_ssm_key
+        userid_collector_name_ssm_key = var.userid_collector_name_ssm_key
+        userid_agent_secret_ssm_key   = var.userid_agent_secret_ssm_key
+        panorama_ip_1                 = "172.30.0.10"
+        panorama_ip_2                 = "172.30.1.10"
+        tpl_stk                       = "MOJ AWS GP Gateway Stack"
+        device_group                  = "MOJ AWS GP Gateway Firewalls"
       }
       vpc_config = {
         subnet_ids         = var.lambda_subnet_ids

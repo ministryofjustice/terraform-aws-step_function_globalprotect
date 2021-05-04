@@ -34,6 +34,17 @@ variable "panorama_api_key_ssm_key" {
   type        = string
 }
 
+variable "userid_collector_name_ssm_key" {
+  description = "User-ID collector name is stored under this parameter name in SSM"
+  type        = string
+}
+
+variable "userid_agent_secret_ssm_key" {
+  description = "User-ID collector pre-shared key is stored under this parameter name in SSM"
+  type        = string
+}
+
+
 variable "panorama_ip_1" {
   description = "Panorama IP 1"
   type        = string
