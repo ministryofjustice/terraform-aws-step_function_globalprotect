@@ -652,3 +652,20 @@ resource "aws_cloudwatch_event_target" "this" {
 
   depends_on = [aws_lambda_function.this]
 }
+
+resource "aws_lambda_alias" "this" {
+  name             = "cloudwatch_alarm_switch_alias"
+  function_name    = aws_lambda_function.this["cloudwatch_alarm_switch"].function_name
+  function_version = "$LATEST"
+}
+
+resource "aws_lambda_permission" "this" {
+  statement_id  = "AllowExecutionFromCloudWatchSwitchLambda"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.this["cloudwatch_alarm_switch"].function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.this.arn
+  qualifier     = aws_lambda_alias.this.name
+
+  depends_on = [aws_lambda_function.this]
+}
