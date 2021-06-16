@@ -44,7 +44,7 @@ variable "userid_agent_secret_ssm_key" {
   type        = string
 }
 
-variable "log-collector-group_ssm_key" {
+variable "log_collector_group_ssm_key" {
   description = "Log collector group name is stored under this parameter name in SSM"
   type        = string
 }
