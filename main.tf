@@ -143,6 +143,7 @@ locals {
         panorama_api_key_ssm_key      = var.panorama_api_key_ssm_key
         userid_collector_name_ssm_key = var.userid_collector_name_ssm_key
         userid_agent_secret_ssm_key   = var.userid_agent_secret_ssm_key
+        log-collector-group_ssm_key   = var.log-collector-group_ssm_key
         panorama_ip_1                 = "172.30.0.10"
         panorama_ip_2                 = "172.30.1.10"
         tpl_stk                       = "MOJ AWS GP Gateway Stack"
@@ -175,6 +176,7 @@ locals {
         panorama_api_key_ssm_key      = var.panorama_api_key_ssm_key
         userid_collector_name_ssm_key = var.userid_collector_name_ssm_key
         userid_agent_secret_ssm_key   = var.userid_agent_secret_ssm_key
+        log-collector-group_ssm_key   = var.log-collector-group_ssm_key
         panorama_ip_1                 = "172.30.0.10"
         panorama_ip_2                 = "172.30.1.10"
         tpl_stk                       = "MOJ AWS GP Gateway Stack"
