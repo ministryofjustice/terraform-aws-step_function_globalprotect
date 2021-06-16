@@ -57,7 +57,7 @@ No modules.
 | <a name="input_lamda_function_src_dir"></a> [lamda\_function\_src\_dir](#input\_lamda\_function\_src\_dir) | lambda function source directory | `string` | `"src"` | no |
 | <a name="input_layer_function_build_dir"></a> [layer\_function\_build\_dir](#input\_layer\_function\_build\_dir) | layer function zip directory | `string` | `"package"` | no |
 | <a name="input_layer_function_dir"></a> [layer\_function\_dir](#input\_layer\_function\_dir) | Local dir name of the lambda layer function | `string` | `"lambda_layer_function"` | no |
-| <a name="input_log-collector-group_ssm_key"></a> [log-collector-group\_ssm\_key](#input\_log-collector-group\_ssm\_key) | Log collector group name is stored under this parameter name in SSM | `string` | n/a | yes |
+| <a name="input_log_collector_group_ssm_key"></a> [log\_collector\_group\_ssm\_key](#input\_log\_collector\_group\_ssm\_key) | Log collector group name is stored under this parameter name in SSM | `string` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | name to prepend to lambda functions and state machine | `string` | n/a | yes |
 | <a name="input_panorama_api_key_ssm_key"></a> [panorama\_api\_key\_ssm\_key](#input\_panorama\_api\_key\_ssm\_key) | Panorama aws\_lambda user's api key is stored under this parameter name in SSM | `string` | n/a | yes |
 | <a name="input_panorama_ip_1"></a> [panorama\_ip\_1](#input\_panorama\_ip\_1) | Panorama IP 1 | `string` | n/a | yes |
