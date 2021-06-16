@@ -44,6 +44,10 @@ variable "userid_agent_secret_ssm_key" {
   type        = string
 }
 
+variable "log-collector-group_ssm_key" {
+  description = "Log collector group name is stored under this parameter name in SSM"
+  type        = string
+}
 
 variable "panorama_ip_1" {
   description = "Panorama IP 1"
