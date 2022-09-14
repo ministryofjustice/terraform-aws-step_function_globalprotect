@@ -4,7 +4,7 @@ resource "aws_lambda_layer_version" "as_layer" {
   description = "Auto scale lambda layer"
 
   source_code_hash    = filebase64sha256("${path.root}/${var.layer_function_dir}/${var.layer_function_build_dir}/layer.zip")
-  compatible_runtimes = ["python3.6", "python3.7"]
+  compatible_runtimes = [ "python3.7" ]
 }
 
 # Generate zip files for lambda functions if development variable is true
