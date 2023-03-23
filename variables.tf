@@ -34,6 +34,11 @@ variable "panorama_api_key_ssm_key" {
   type        = string
 }
 
+variable "panorama_auth_key_ssm_key" {
+  description = "Used to authenticate the firewall when connecting to Panorama"
+  type        = string
+}
+
 variable "userid_collector_name_ssm_key" {
   description = "User-ID collector name is stored under this parameter name in SSM"
   type        = string
