@@ -73,7 +73,7 @@ No modules.
 | <a name="input_userid_agent_secret_ssm_key"></a> [userid\_agent\_secret\_ssm\_key](#input\_userid\_agent\_secret\_ssm\_key) | User-ID collector pre-shared key is stored under this parameter name in SSM | `string` | n/a | yes |
 | <a name="input_userid_collector_name_ssm_key"></a> [userid\_collector\_name\_ssm\_key](#input\_userid\_collector\_name\_ssm\_key) | User-ID collector name is stored under this parameter name in SSM | `string` | n/a | yes |
 | <a name="input_vmseries_api_key_ssm_key"></a> [vmseries\_api\_key\_ssm\_key](#input\_vmseries\_api\_key\_ssm\_key) | VM-series bootstrap admin user's api key is stored under this parameter name in SSM | `string` | n/a | yes |
-
+| <a name="input_panorama_auth_key_ssm_key"></a> [panorama\_auth\_key\_ssm\_key](#input\_panorama\_auth\_key\_ssm\_key) | Panorama Device Auth Key new in PANOS 10.x is stored under this parameter name in SSM | `string` | n/a | yes |
 ## Outputs
 
 | Name | Description |

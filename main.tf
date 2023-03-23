@@ -111,6 +111,7 @@ locals {
         Region                    = var.region
         gp_client_ip_pool_db_name = aws_dynamodb_table.gp.id
         vmseries_api_key_ssm_key  = var.vmseries_api_key_ssm_key
+        panorama_auth_key_ssm_key = var.panorama_auth_key_ssm_key
         panorama_ip_1             = var.panorama_ip_1
         panorama_ip_2             = var.panorama_ip_2
       }
