@@ -431,8 +431,8 @@ resource "aws_sfn_state_machine" "sfn" {
       "Retry": [ 
         {
           "ErrorEquals": [ "FWNotUpException" ],
-          "IntervalSeconds": 120,
-          "MaxAttempts": 15,
+          "IntervalSeconds": 360,
+          "MaxAttempts": 5,
           "BackoffRate": 1
         }
       ],
@@ -455,7 +455,7 @@ resource "aws_sfn_state_machine" "sfn" {
         {
           "ErrorEquals": [ "NotLicensed" ],
           "IntervalSeconds": 10,
-          "MaxAttempts": 10,
+          "MaxAttempts": 2,
           "BackoffRate": 1.5
         } 
       ],
