@@ -412,7 +412,7 @@ resource "aws_sfn_state_machine" "sfn" {
     "create_route": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["create_route"].arn}",
-      "Next": "config_fw",
+      "Next": "wait_till_vm_ready",
       "TimeoutSeconds": 10,
       "Catch": [
         {
@@ -424,6 +424,11 @@ resource "aws_sfn_state_machine" "sfn" {
         }
       ]
     },
+    "wait_till_vm_ready": {
+      "Type": "Wait",
+      "Seconds": 480,
+      "Next": "config_fw"
+    },
     "config_fw": {
       "Type": "Task",
       "Resource": "${aws_lambda_function.this["config_fw"].arn}",
@@ -431,9 +436,9 @@ resource "aws_sfn_state_machine" "sfn" {
       "Retry": [ 
         {
           "ErrorEquals": [ "FWNotUpException" ],
-          "IntervalSeconds": 360,
+          "IntervalSeconds": 10,
           "MaxAttempts": 5,
-          "BackoffRate": 1
+          "BackoffRate": 2
         }
       ],
       "Catch": [
